@@ -1,15 +1,15 @@
 import { axiosInstance } from 'axiosInstance';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction, useCallback, useState } from 'react';
+import { useQuery } from 'react-query';
 import { queryKeys } from 'react-query/constants';
 import type { Staff } from 'shared/types';
 
 import { filterByTreatment } from '../utils';
 
-// for when we need a query function for useQuery
-// async function getStaff(): Promise<Staff[]> {
-//   const { data } = await axiosInstance.get('/staff');
-//   return data;
-// }
+async function getStaff(): Promise<Staff[]> {
+  const { data } = await axiosInstance.get('/staff');
+  return data;
+}
 
 interface UseStaff {
   staff: Staff[];
@@ -18,11 +18,16 @@ interface UseStaff {
 }
 
 export function useStaff(): UseStaff {
-  // for filtering staff by treatment
   const [filter, setFilter] = useState('all');
 
-  // TODO: get data from server via useQuery
-  const staff = [];
+  const staffFilter = useCallback(
+    (data: Staff[]) => filterByTreatment(data, filter),
+    [filter],
+  );
+
+  const { data: staff = [] } = useQuery([queryKeys.staff], getStaff, {
+    select: filter === 'all' ? undefined : staffFilter,
+  });
 
   return { staff, filter, setFilter };
 }

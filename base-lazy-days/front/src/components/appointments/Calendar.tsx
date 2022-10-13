@@ -11,8 +11,10 @@ import { UserAppointments } from 'components/user/UserAppointments';
 import dayjs from 'dayjs';
 import { ReactElement } from 'react';
 import { TiArrowLeftThick, TiArrowRightThick } from 'react-icons/ti';
+import { queryKeys } from 'react-query/constants';
 
 import { DateBox } from './DateBox';
+import { getNewMonthYear } from './hooks/monthYear';
 import { useAppointments } from './hooks/useAppointments';
 
 export function Calendar(): ReactElement {
@@ -44,7 +46,6 @@ export function Calendar(): ReactElement {
           position="absolute"
           right="10px"
           checked={!showAll}
-          isChecked
           onChange={() => setShowAll((prevValue) => !prevValue)}
         >
           Only show available
